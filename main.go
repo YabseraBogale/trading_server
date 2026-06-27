@@ -1,8 +1,9 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
 	"log"
+	"net/http"
 	"time"
 
 	"gorm.io/driver/sqlite"
@@ -25,17 +26,40 @@ func (TickertHistory) TableName() string {
 
 func main() {
 	db, err := gorm.Open(sqlite.Open("database.db"), &gorm.Config{})
+
 	if err != nil {
 		log.Fatalln(err)
 	}
+
 	err = db.AutoMigrate(&TickertHistory{})
+
 	if err != nil {
 		log.Fatalln(err)
 	}
+
 	var result []string
+
 	err = db.Model(&TickertHistory{}).Distinct("name").Pluck("name", &result).Error
+
 	if err != nil {
 		log.Fatalln(err)
 	}
-	fmt.Println(len(result))
+
+	http.HandleFunc("/name", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		respone := struct {
+			Count  int
+			Ticker []string
+		}{
+			Count:  len(result),
+			Ticker: result,
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(respone)
+	})
 }
