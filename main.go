@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -9,7 +10,7 @@ import (
 )
 
 type TickertHistory struct {
-	Name       string    `gorm:"column:name"`
+	Name       string    `gorm:"column:name;index"`
 	OpenPrice  float64   `gorm:"column:open_price"`
 	LowPrice   float64   `gorm:"column:low_price"`
 	HighPrice  float64   `gorm:"column:high_price"`
@@ -27,11 +28,14 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	db.AutoMigrate(&TickertHistory{})
-	var result []TickertHistory
-	err = db.Select("name").Find(&result).Error
+	err = db.AutoMigrate(&TickertHistory{})
 	if err != nil {
 		log.Fatalln(err)
 	}
-
+	var result []string
+	err = db.Model(&TickertHistory{}).Distinct("name").Pluck("name", &result).Error
+	if err != nil {
+		log.Fatalln(err)
+	}
+	fmt.Println(len(result))
 }
