@@ -60,6 +60,14 @@ func main() {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(respone)
+		if err := json.NewEncoder(w).Encode(respone); err != nil {
+			log.Println("Error in json Encoding:", err)
+		}
+
 	})
+
+	if err := http.ListenAndServe(":8080", nil); err != nil {
+		log.Println("Failed to start server:", err)
+	}
+
 }
