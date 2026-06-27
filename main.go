@@ -9,13 +9,13 @@ import (
 )
 
 type TickertHistory struct {
-	Name       string    `gorm:"name"`
-	OpenPrice  float64   `gorm:"open_price"`
-	LowPrice   float64   `gorm:"low_price"`
-	HighPrice  float64   `gorm:"high_price"`
-	ClosePrice float64   `gorm:"close_price"`
-	Volume     float64   `gorm:"volume"`
-	DatePrice  time.Time `gorm:"date_price"`
+	Name       string    `gorm:"column:name"`
+	OpenPrice  float64   `gorm:"column:open_price"`
+	LowPrice   float64   `gorm:"column:low_price"`
+	HighPrice  float64   `gorm:"column:high_price"`
+	ClosePrice float64   `gorm:"column:close_price"`
+	Volume     float64   `gorm:"column:volume"`
+	DatePrice  time.Time `gorm:"column:date_price"`
 }
 
 func (TickertHistory) TableName() string {
