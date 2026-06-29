@@ -66,6 +66,10 @@ func main() {
 
 	})
 
+	http.HandleFunc("/constituents", func(w http.ResponseWriter, r *http.Request) {
+
+	})
+
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Println("Failed to start server:", err)
 	}
