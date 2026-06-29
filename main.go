@@ -11,7 +11,6 @@ import (
 )
 
 type TickertHistory struct {
-	ID         int64     `gorm:"primaryKey"`
 	Name       string    `gorm:"column:name"`
 	OpenPrice  float64   `gorm:"column:open_price"`
 	LowPrice   float64   `gorm:"column:low_price"`
@@ -22,7 +21,6 @@ type TickertHistory struct {
 }
 
 type Symbol struct {
-	ID                int64   `gorm:"primaryKey"`
 	Name              string  `gorm:"column:name"`
 	SharesOutstanding float64 `gorm:"column:shares_outstanding"`
 }
@@ -41,7 +39,6 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	db.Migrator().DropTable(&TickertHistory{}, &Symbol{})
 
 	err = db.AutoMigrate(&TickertHistory{}, &Symbol{})
 
