@@ -11,7 +11,7 @@ import (
 )
 
 type TickertHistory struct {
-	Name       string    `gorm:"column:name;index"`
+	Name       string    `gorm:"column:name"`
 	OpenPrice  float64   `gorm:"column:open_price"`
 	LowPrice   float64   `gorm:"column:low_price"`
 	HighPrice  float64   `gorm:"column:high_price"`
@@ -20,8 +20,17 @@ type TickertHistory struct {
 	DatePrice  time.Time `gorm:"column:date_price"`
 }
 
+type Symbol struct {
+	Name              string  `gorm:"column:name"`
+	SharesOutstanding float64 `gorm:"column:shares_outstanding"`
+}
+
 func (TickertHistory) TableName() string {
 	return "tickert_history"
+}
+
+func (Symbol) TableName() string {
+	return "symbols"
 }
 
 func main() {
@@ -31,7 +40,7 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	err = db.AutoMigrate(&TickertHistory{})
+	err = db.AutoMigrate(&TickertHistory{}, &Symbol{})
 
 	if err != nil {
 		log.Fatalln(err)
@@ -63,11 +72,19 @@ func main() {
 		if err := json.NewEncoder(w).Encode(respone); err != nil {
 			log.Println("Error in json Encoding:", err)
 		}
-
 	})
 
 	http.HandleFunc("/constituents", func(w http.ResponseWriter, r *http.Request) {
-
+		var constituents []Symbol
+		db.Model(&Symbol{}).Select("name", "shares_outstanding").Scan(&constituents)
+		if r.Method != http.MethodGet {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewDecoder(w).Encode(constituents); err != nil {
+			log.Println("Error in json Encoding", err)
+		}
 	})
 
 	if err := http.ListenAndServe(":8080", nil); err != nil {
