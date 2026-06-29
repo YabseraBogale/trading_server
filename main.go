@@ -41,6 +41,7 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	db.Migrator().DropTable(&TickertHistory{}, &Symbol{})
 
 	err = db.AutoMigrate(&TickertHistory{}, &Symbol{})
 
