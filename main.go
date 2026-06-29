@@ -82,7 +82,7 @@ func main() {
 			return
 		}
 		w.Header().Set("Content-Type", "application/json")
-		if err := json.NewDecoder(w).Encode(constituents); err != nil {
+		if err := json.NewEncoder(w).Encode(constituents); err != nil {
 			log.Println("Error in json Encoding", err)
 		}
 	})
