@@ -34,8 +34,8 @@ func (Symbole) TableName() string {
 }
 
 type PriceLevel struct {
-	Price  float64 `gorm:"colume:close_price"`
-	Volume float64 `gorm:"colume:volume"`
+	ClosePrice float64 `gorm:"colume:close_price"`
+	Volume     float64 `gorm:"colume:volume"`
 }
 
 func main() {
