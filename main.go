@@ -33,6 +33,11 @@ func (Symbole) TableName() string {
 	return "symbols"
 }
 
+type PriceLevel struct {
+	Price  float64 `gorm:"colume:price"`
+	Volume float64 `gorm:"colume:volume"`
+}
+
 func main() {
 	db, err := gorm.Open(sqlite.Open("database.db"), &gorm.Config{})
 
@@ -90,5 +95,17 @@ func main() {
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Println("Failed to start server:", err)
 	}
-
+	http.HandleFunc("GET /{name}", func(w http.ResponseWriter, r *http.Request) {
+		name := r.PathValue("name")
+		var priceLevel []PriceLevel
+		db.Model(&TickertHistory{}).Select("name", "volume").Where("name=?", name).Scan(&priceLevel)
+		if r.Method != http.MethodGet {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(priceLevel); err != nil {
+			log.Println("Error in json Encoding", err)
+		}
+	})
 }
