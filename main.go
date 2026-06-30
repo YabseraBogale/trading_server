@@ -11,7 +11,7 @@ import (
 )
 
 type TickertHistory struct {
-	Name       string    `gorm:"column:name"`
+	Name       string    `gorm:"column:name;index"`
 	OpenPrice  float64   `gorm:"column:open_price"`
 	LowPrice   float64   `gorm:"column:low_price"`
 	HighPrice  float64   `gorm:"column:high_price"`
