@@ -96,11 +96,14 @@ func main() {
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Println("Failed to start server:", err)
 	}
-	http.HandleFunc("GET /name/{name}", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/{name}", func(w http.ResponseWriter, r *http.Request) {
 		name := r.PathValue("name")
 		fmt.Println(name)
 		var priceLevel []PriceLevel
-		db.Model(&TickertHistory{}).Select("name", "volume").Where("name=?", name).Scan(&priceLevel)
+		err := db.Model(&TickertHistory{}).Select("name", "volume").Where("name=?", name).Scan(&priceLevel)
+		if err != nil {
+			log.Fatalln("Error", err)
+		}
 		if r.Method != http.MethodGet {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return
