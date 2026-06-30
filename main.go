@@ -20,7 +20,7 @@ type TickertHistory struct {
 	DatePrice  time.Time `gorm:"column:date_price"`
 }
 
-type Symbol struct {
+type Symbole struct {
 	Name              string  `gorm:"column:name"`
 	SharesOutstanding float64 `gorm:"column:shares_outstanding"`
 }
@@ -29,7 +29,7 @@ func (TickertHistory) TableName() string {
 	return "tickert_history"
 }
 
-func (Symbol) TableName() string {
+func (Symbole) TableName() string {
 	return "symbols"
 }
 
@@ -40,7 +40,7 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	err = db.AutoMigrate(&TickertHistory{}, &Symbol{})
+	err = db.AutoMigrate(&TickertHistory{}, &Symbole{})
 
 	if err != nil {
 		log.Fatalln(err)
@@ -75,8 +75,8 @@ func main() {
 	})
 
 	http.HandleFunc("/constituents", func(w http.ResponseWriter, r *http.Request) {
-		var constituents []Symbol
-		db.Model(&Symbol{}).Select("name", "shares_outstanding").Scan(&constituents)
+		var constituents []Symbole
+		db.Model(&Symbole{}).Select("name", "shares_outstanding").Scan(&constituents)
 		if r.Method != http.MethodGet {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return
