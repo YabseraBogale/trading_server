@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -95,8 +96,9 @@ func main() {
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Println("Failed to start server:", err)
 	}
-	http.HandleFunc("GET /{name}", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("GET /name/{name}", func(w http.ResponseWriter, r *http.Request) {
 		name := r.PathValue("name")
+		fmt.Println(name)
 		var priceLevel []PriceLevel
 		db.Model(&TickertHistory{}).Select("name", "volume").Where("name=?", name).Scan(&priceLevel)
 		if r.Method != http.MethodGet {
