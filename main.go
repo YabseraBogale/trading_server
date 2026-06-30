@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -93,24 +92,20 @@ func main() {
 		}
 	})
 
-	if err := http.ListenAndServe(":8080", nil); err != nil {
-		log.Println("Failed to start server:", err)
-	}
 	http.HandleFunc("/{name}", func(w http.ResponseWriter, r *http.Request) {
 		name := r.PathValue("name")
-		fmt.Println(name)
 		var priceLevel []PriceLevel
 		err := db.Model(&TickertHistory{}).Select("name", "volume").Where("name=?", name).Scan(&priceLevel)
 		if err != nil {
 			log.Fatalln("Error", err)
-		}
-		if r.Method != http.MethodGet {
-			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-			return
 		}
 		w.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(w).Encode(priceLevel); err != nil {
 			log.Println("Error in json Encoding", err)
 		}
 	})
+
+	if err := http.ListenAndServe(":8080", nil); err != nil {
+		log.Println("Error", err)
+	}
 }
