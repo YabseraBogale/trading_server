@@ -96,8 +96,11 @@ func main() {
 		name := r.PathValue("name")
 		var priceLevel []PriceLevel
 		err := db.Model(&TickertHistory{}).Select("name", "volume").Where("name=?", name).Scan(&priceLevel)
-		if err != nil {
-			log.Fatalln("Error", err)
+		if err.Error != nil {
+			log.Println("Error", err.Error)
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
+
 		}
 		w.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(w).Encode(priceLevel); err != nil {
