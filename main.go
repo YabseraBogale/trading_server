@@ -34,7 +34,7 @@ func (Symbole) TableName() string {
 }
 
 type PriceLevel struct {
-	Price  float64 `gorm:"colume:price"`
+	Price  float64 `gorm:"colume:close_price"`
 	Volume float64 `gorm:"colume:volume"`
 }
 
@@ -95,7 +95,7 @@ func main() {
 	http.HandleFunc("/{name}", func(w http.ResponseWriter, r *http.Request) {
 		name := r.PathValue("name")
 		var priceLevel []PriceLevel
-		err := db.Model(&TickertHistory{}).Select("name", "volume").Where("name=?", name).Scan(&priceLevel)
+		err := db.Model(&TickertHistory{}).Select("close_price", "volume").Where("name=?", name).Scan(&priceLevel)
 		if err.Error != nil {
 			log.Println("Error", err.Error)
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
