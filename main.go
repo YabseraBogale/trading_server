@@ -81,14 +81,13 @@ func main() {
 
 	http.HandleFunc("/constituents", func(w http.ResponseWriter, r *http.Request) {
 		var constituents []Symbole
-		db.Model(&Symbole{})
-							.Select("name", "shares_outstanding")
-							.Scan(&constituents)
+		db.Model(&Symbole{}).Select("name", "shares_outstanding").Scan(&constituents)
 		if r.Method != http.MethodGet {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return
 		}
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().
+			Set("Content-Type", "application/json")
 		if err := json.NewEncoder(w).Encode(constituents); err != nil {
 			log.Println("Error in json Encoding", err)
 		}
@@ -97,11 +96,11 @@ func main() {
 	http.HandleFunc("/{name}", func(w http.ResponseWriter, r *http.Request) {
 		name := r.PathValue("name")
 		var priceLevel []PriceLevel
-		err := db.Model(&TickertHistory{})
-							.Select("close_price", "volume")
-							.Where("name=?", name)
-							.Order("date_price Asc")
-							.Scan(&priceLevel)
+		err := db.Model(&TickertHistory{}).
+			Select("close_price", "volume").
+			Where("name=?", name).
+			Order("date_price Asc").
+			Scan(&priceLevel)
 		if err.Error != nil {
 			log.Println("Error", err.Error)
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
