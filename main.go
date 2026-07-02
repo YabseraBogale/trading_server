@@ -53,7 +53,7 @@ func main() {
 
 	var result []string
 
-	err = db.Model(&TickertHistory{}).Distinct("name").Order("date_price Asc").Pluck("name", &result).Error
+	err = db.Model(&TickertHistory{}).Distinct("name").Pluck("name", &result).Error
 
 	if err != nil {
 		log.Fatalln(err)
@@ -81,7 +81,9 @@ func main() {
 
 	http.HandleFunc("/constituents", func(w http.ResponseWriter, r *http.Request) {
 		var constituents []Symbole
-		db.Model(&Symbole{}).Select("name", "shares_outstanding").Scan(&constituents)
+		db.Model(&Symbole{})
+							.Select("name", "shares_outstanding")
+							.Scan(&constituents)
 		if r.Method != http.MethodGet {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return
@@ -95,7 +97,11 @@ func main() {
 	http.HandleFunc("/{name}", func(w http.ResponseWriter, r *http.Request) {
 		name := r.PathValue("name")
 		var priceLevel []PriceLevel
-		err := db.Model(&TickertHistory{}).Select("close_price", "volume").Where("name=?", name).Scan(&priceLevel)
+		err := db.Model(&TickertHistory{})
+							.Select("close_price", "volume")
+							.Where("name=?", name)
+							.Order("date_price Asc")
+							.Scan(&priceLevel)
 		if err.Error != nil {
 			log.Println("Error", err.Error)
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
