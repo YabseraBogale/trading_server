@@ -53,7 +53,7 @@ func main() {
 
 	var result []string
 
-	err = db.Model(&TickertHistory{}).Distinct("name").Pluck("name", &result).Error
+	err = db.Model(&TickertHistory{}).Distinct("name").Order("date_price Asc").Pluck("name", &result).Error
 
 	if err != nil {
 		log.Fatalln(err)
