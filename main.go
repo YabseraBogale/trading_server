@@ -113,6 +113,14 @@ func main() {
 		}
 	})
 
+	http.HandleFunc("/out_standing_shares", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			http.Error(w, "Method not Allowed", http.StatusMethodNotAllowed)
+		}
+		var result []int
+		err := db.Model(&TickertHistory{}).Select()
+	})
+
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Println("Error", err)
 	}
