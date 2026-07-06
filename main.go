@@ -51,18 +51,18 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	var result []string
-
-	err = db.Model(&TickertHistory{}).Distinct("name").Pluck("name", &result).Error
-
-	if err != nil {
-		log.Fatalln(err)
-	}
-
 	http.HandleFunc("/name", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return
+		}
+
+		var result []string
+
+		err := db.Model(&TickertHistory{}).Distinct("name").Pluck("name", &result).Error
+
+		if err != nil {
+			log.Fatalln(err)
 		}
 
 		respone := struct {
