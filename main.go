@@ -10,6 +10,19 @@ type TranscationtHistory struct {
 	DatePrice  string  `grom:column:DatePrice`
 }
 
+func (TranscationtHistory) TableName() string {
+	return "TranscationtHistory"
+}
+
+type Symbols struct {
+	Name              string  `grom:"column:Name"`
+	SharesOutstanding float64 `grom:"column:SharesOutstanding"`
+}
+
+func (Symbols) TableName() string {
+	return "Symbols"
+}
+
 func main() {
 
 }
