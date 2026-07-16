@@ -1,7 +1,5 @@
 package main
 
-import "time"
-
 type TranscationtHistory struct {
 	Name       string  `grom:"column:Name"`
 	OpenPrice  float64 `grom:"column:OpenPrice"`
